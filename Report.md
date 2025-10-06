@@ -90,7 +90,7 @@ O Profiler mostrou redução significativa nas renderizações e menor tempo de 
 ---
 
 ## 🔗 Link do projeto
-*(cole aqui o link do deploy no Netlify ou Vercel — ex: https://meu-react-lab.vercel.app)*
+![Vercel](https://store-gules-ten.vercel.app)
 
 ---
 
