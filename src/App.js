@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import './App.css';
 import Header from './components/Header';
 import ProductList from './components/ProductList';
@@ -11,7 +11,7 @@ function App() {
     { id: 2, name: 'Phone', price: 699, category: 'Electronics' },
     { id: 3, name: 'Book', price: 29, category: 'Education' },
     { id: 4, name: 'Headphones', price: 199, category: 'Electronics' },
-    { id: 5, name: 'Tablet', price: 399, category: 'Electronics' }
+    { id: 5, name: 'Tablet', price: 399, category: 'Electronics' },
   ]);
 
   const [cart, setCart] = useState([]);
@@ -20,27 +20,27 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [theme, setTheme] = useState('light');
 
-  const addToCart = (product) => {
-    setCart([...cart, { ...product, quantity: 1 }]);
-  };
+  const addToCart = useCallback(
+    (product) => setCart((prev) => [...prev, { ...product, quantity: 1 }]),
+    []
+  );
+  const removeFromCart = useCallback(
+    (productId) => setCart((prev) => prev.filter((item) => item.id !== productId)),
+    []
+  );
+  const updateUser = useCallback((newUser) => setUser(newUser), []);
+  const toggleTheme = useCallback(
+    () => setTheme((prev) => (prev === 'light' ? 'dark' : 'light')),
+    []
+  );
 
-  const removeFromCart = (productId) => {
-    setCart(cart.filter(item => item.id !== productId));
-  };
-
-  const updateUser = (newUser) => {
-    setUser(newUser);
-  };
-
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
-  };
+  const cartIds = useMemo(() => new Set(cart.map((i) => i.id)), [cart]);
 
   return (
     <div className={`app ${theme}`}>
-      <Header 
+      <Header
         user={user}
-        cart={cart}
+        cartCount={cart.length}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         selectedCategory={selectedCategory}
@@ -48,26 +48,26 @@ function App() {
         theme={theme}
         toggleTheme={toggleTheme}
       />
-      
+
       <div className="main-content">
-        <ProductList 
+        <ProductList
           products={products}
-          cart={cart}
+          cartIds={cartIds}
           addToCart={addToCart}
           searchTerm={searchTerm}
           selectedCategory={selectedCategory}
           theme={theme}
         />
-        
+
         <div className="sidebar">
-          <Cart 
+          <Cart
             cart={cart}
             removeFromCart={removeFromCart}
             user={user}
             theme={theme}
           />
-          
-          <UserProfile 
+
+          <UserProfile
             user={user}
             updateUser={updateUser}
             cart={cart}

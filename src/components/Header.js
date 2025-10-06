@@ -3,8 +3,7 @@ import SearchBar from './SearchBar';
 import CategoryFilter from './CategoryFilter';
 import ThemeToggle from './ThemeToggle';
 
-function Header({ user, cart, searchTerm, setSearchTerm, selectedCategory, setSelectedCategory, theme, toggleTheme }) {
-  // Intentional performance issue: expensive calculation on every render
+function Header({ user, cartCount, searchTerm, setSearchTerm, selectedCategory, setSelectedCategory, theme, toggleTheme }) {
   const expensiveCalculation = () => {
     let result = 0;
     for (let i = 0; i < 100000; i++) {
@@ -37,7 +36,7 @@ function Header({ user, cart, searchTerm, setSearchTerm, selectedCategory, setSe
         />
         
         <div>
-          Welcome, {user.name}! Cart: {cart.length} items
+          Welcome, {user.name}! Cart: {cartCount} items
         </div>
         
         <div style={{ fontSize: '12px', opacity: 0.7 }}>
@@ -48,4 +47,4 @@ function Header({ user, cart, searchTerm, setSearchTerm, selectedCategory, setSe
   );
 }
 
-export default Header;
+export default React.memo(Header);
