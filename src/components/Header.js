@@ -1,47 +1,43 @@
-import React from 'react';
-import SearchBar from './SearchBar';
-import CategoryFilter from './CategoryFilter';
-import ThemeToggle from './ThemeToggle';
+import React, { useCallback } from "react";
+import { useAppContext } from "../context/AppContext";
+import SearchBar from "./SearchBar";
+import CategoryFilter from "./CategoryFilter";
+import ThemeToggle from "./ThemeToggle";
 
-function Header({ user, cartCount, searchTerm, setSearchTerm, selectedCategory, setSelectedCategory, theme, toggleTheme }) {
-  const expensiveCalculation = () => {
-    let result = 0;
-    for (let i = 0; i < 100000; i++) {
-      result += Math.random();
-    }
-    return result;
-  };
+function Header() {
+  const { state, dispatch } = useAppContext();
+  const { user, cart, searchTerm, selectedCategory, theme } = state;
 
-  const randomValue = expensiveCalculation();
+  const setSearchTerm = useCallback(
+    (v) => dispatch({ type: "SET_SEARCH", payload: v }),
+    [dispatch]
+  );
+  const setSelectedCategory = useCallback(
+    (v) => dispatch({ type: "SET_CATEGORY", payload: v }),
+    [dispatch]
+  );
+  const toggleTheme = useCallback(
+    () => dispatch({ type: "TOGGLE_THEME" }),
+    [dispatch]
+  );
 
   return (
-    <header className="card">
+    <header className={`header ${theme}`}>
       <h1>E-Commerce Store</h1>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-        <SearchBar 
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          theme={theme}
-        />
-        
-        <CategoryFilter 
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          theme={theme}
-        />
-        
-        <ThemeToggle 
-          theme={theme}
-          toggleTheme={toggleTheme}
-        />
-        
-        <div>
-          Welcome, {user.name}! Cart: {cartCount} items
-        </div>
-        
-        <div style={{ fontSize: '12px', opacity: 0.7 }}>
-          Random: {randomValue.toFixed(2)}
-        </div>
+
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} theme={theme} />
+      <CategoryFilter
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        theme={theme}
+      />
+      <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+
+      <div>
+        Welcome, {user.name}! Cart: {cart.length} items
+        <span style={{ marginLeft: "10px", fontSize: "12px", opacity: 0.6 }}>
+          Random: {Math.random().toFixed(5) * 10000}
+        </span>
       </div>
     </header>
   );

@@ -1,31 +1,36 @@
-import React from 'react';
-import CartItem from './CartItem';
+import React, { useMemo } from "react";
+import CartItem from "./CartItem";
+import { useAppContext } from "../context/AppContext";
 
-function Cart({ cart, removeFromCart, user, theme }) {
-  console.log('Cart rendered');
+function Cart({ theme }) {
+  console.log("Cart rendered");
 
-  // Expensive total calculation on every render
-  const calculateTotal = () => {
+  const { state, dispatch } = useAppContext();
+  const { cart, user } = state;
+
+  const removeFromCart = (id) => {
+    dispatch({ type: "REMOVE_FROM_CART", payload: id });
+  };
+
+  const total = useMemo(() => {
     let total = 0;
     for (let i = 0; i < 1000; i++) {
       total += cart.reduce((sum, item) => sum + item.price, 0) * 0.001;
     }
     return cart.reduce((sum, item) => sum + item.price, 0);
-  };
-
-  const total = calculateTotal();
+  }, [cart]);
 
   return (
     <div className="card">
       <h2>Shopping Cart</h2>
       <p>User: {user.name}</p>
-      
+
       {cart.length === 0 ? (
         <p>Cart is empty</p>
       ) : (
         <>
-          {cart.map(item => (
-            <CartItem 
+          {cart.map((item) => (
+            <CartItem
               key={item.id}
               item={item}
               removeFromCart={removeFromCart}
@@ -33,7 +38,7 @@ function Cart({ cart, removeFromCart, user, theme }) {
               theme={theme}
             />
           ))}
-          <div style={{ marginTop: '10px', fontWeight: 'bold' }}>
+          <div style={{ marginTop: "10px", fontWeight: "bold" }}>
             Total: ${total}
           </div>
         </>
@@ -42,4 +47,4 @@ function Cart({ cart, removeFromCart, user, theme }) {
   );
 }
 
-export default Cart;
+export default React.memo(Cart);
